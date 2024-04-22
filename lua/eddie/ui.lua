@@ -4,13 +4,20 @@ local get_opts = require("eddie.core.config").get_opts
 local ac = require("eddie.autocmd")
 local utils = require("eddie.core.utils")
 
+---@class WindowOpt
+---@field list table
+---@field write_cb fun(args: table)
+---@field cur number[]
+---@field bufnur number
+---@field winnr number
+
 ---@class UI
----@field create fun(opts: table)
+---@field create fun(opts: WindowOpt)
 ---@return UI
 local M = {}
 
 function M.create(opts)
-	if not opts or not opts.list or not opts.write_cb then
+	if not opts or not opts.list or not opts.write_cb or not opts.cur then
 		Log.warn(sf(
 			[[ui: create invalid opts
 
@@ -22,34 +29,26 @@ function M.create(opts)
 	end
 	opts.config = get_opts()
 
-	local bufnr = vim.api.nvim_create_buf(false, true)
-	local winnr = vim.api.nvim_open_win(bufnr, true, opts.config.float)
+	opts.bufnr = vim.api.nvim_create_buf(false, true)
+	opts.winnr = vim.api.nvim_open_win(opts.bufnr, true, opts.config.float)
 
-	vim.api.nvim_buf_set_lines(bufnr, 0, #opts.list, false, opts.list)
-	vim.api.nvim_buf_set_name(bufnr, opts.config.bo.filetype)
+	vim.api.nvim_buf_set_lines(opts.bufnr, 0, #opts.list, false, opts.list)
+	vim.api.nvim_buf_set_name(opts.bufnr, opts.config.bo.filetype)
 
 	for _, t in ipairs({ "bo", "wo" }) do
 		for k, v in pairs(opts.config[t]) do
-			vim[t][t == "bo" and bufnr or t == "wo" and winnr or nil][k] = v
+			vim[t][t == "bo" and opts.bufnr or t == "wo" and opts.winnr or nil][k] = v
 		end
 	end
 
-	ac.set({
-		bufnr = bufnr,
-		write_cb = opts.write_cb,
-	})
+	ac.set(opts)
 
 	vim.keymap.set("n", "q", function()
-		opts.write_cb({
-			buf = bufnr,
-		})
-		utils.destroy_win(winnr)
-	end, { buffer = bufnr, silent = true })
+		opts.write_cb({ buf = opts.bufnr })
+		utils.destroy_win(opts)
+	end, { buffer = opts.bufnr, silent = true })
 
-	return {
-		bufnr = bufnr,
-		winnr = winnr,
-	}
+	return opts
 end
 
 return M

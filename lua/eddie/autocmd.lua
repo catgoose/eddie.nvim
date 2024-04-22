@@ -2,7 +2,7 @@ local Log = require("eddie").Log
 local sf = require("eddie.core.utils").string_format
 
 ---@class Autocmd
----@field set fun(opts: {bufnr: number, callback: fun()})
+---@field set fun(opts: WindowOpt)
 ---@return Autocmd
 local M = {}
 

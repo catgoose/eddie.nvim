@@ -59,6 +59,7 @@ lines: %s]],
 	ui.create({
 		list = capture.properties,
 		write_cb = write_cb,
+		cur = cur,
 	})
 end
 
