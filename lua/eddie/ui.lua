@@ -2,7 +2,6 @@ local Log = require("eddie").Log
 local sf = require("eddie.core.utils").string_format
 local get_opts = require("eddie.core.config").get_opts
 local ac = require("eddie.autocmd")
-local const = require("eddie.core.constants").get()
 local utils = require("eddie.core.utils")
 
 ---@class UI
@@ -21,17 +20,16 @@ function M.create(opts)
 		))
 		return
 	end
-	local lines = opts.list
+	opts.config = get_opts()
 
 	local bufnr = vim.api.nvim_create_buf(false, true)
-	local float_opts = get_opts().float
-	local winnr = vim.api.nvim_open_win(bufnr, true, float_opts)
+	local winnr = vim.api.nvim_open_win(bufnr, true, opts.config.float)
 
-	vim.api.nvim_buf_set_lines(bufnr, 0, #lines, false, lines)
-	vim.api.nvim_buf_set_name(bufnr, const.bo.filetype)
+	vim.api.nvim_buf_set_lines(bufnr, 0, #opts.list, false, opts.list)
+	vim.api.nvim_buf_set_name(bufnr, opts.config.bo.filetype)
 
 	for _, t in ipairs({ "bo", "wo" }) do
-		for k, v in pairs(const[t]) do
+		for k, v in pairs(opts.config[t]) do
 			vim[t][t == "bo" and bufnr or t == "wo" and winnr or nil][k] = v
 		end
 	end

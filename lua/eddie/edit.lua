@@ -46,11 +46,13 @@ function M.open()
 lines: %s]],
 			lines
 		))
-		local lines_str = table.concat(lines, " ")
-		vim.api.nvim_buf_set_text(bufnr, range.start_row, range.start_col, range.end_row, range.end_col, { lines_str })
-		if get_opts().write_buffer and vim.bo[args.buf].modified then
-			Log.trace(sf("writing buffer: %s", bufnr))
-			utils.write_buffer(bufnr)
+		if vim.bo[args.buf].modified then
+			local lines_str = table.concat(lines, " ")
+			vim.api.nvim_buf_set_text(bufnr, range.start_row, range.start_col, range.end_row, range.end_col, { lines_str })
+			if get_opts().write_buffer then
+				Log.debug(sf("writing buffer: %s", bufnr))
+				utils.write_buffer(bufnr)
+			end
 		end
 	end
 
