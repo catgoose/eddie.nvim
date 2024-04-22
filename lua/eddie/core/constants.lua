@@ -47,6 +47,7 @@ local _val = {
 		swapfile = false,
 		buflisted = false,
 		bufhidden = "delete",
+		modified = false,
 	},
 	wo = {
 		list = false,

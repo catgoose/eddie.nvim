@@ -10,8 +10,6 @@ local utils = require("eddie.core.utils")
 ---@return UI
 local M = {}
 
-local function open_win(lines) end
-
 function M.create(opts)
 	if not opts or not opts.list or not opts.write_cb then
 		Log.warn(sf(
@@ -29,14 +27,14 @@ function M.create(opts)
 	local float_opts = get_opts().float
 	local winnr = vim.api.nvim_open_win(bufnr, true, float_opts)
 
+	vim.api.nvim_buf_set_lines(bufnr, 0, #lines, false, lines)
+	vim.api.nvim_buf_set_name(bufnr, const.bo.filetype)
+
 	for _, t in ipairs({ "bo", "wo" }) do
 		for k, v in pairs(const[t]) do
 			vim[t][t == "bo" and bufnr or t == "wo" and winnr or nil][k] = v
 		end
 	end
-
-	vim.api.nvim_buf_set_lines(bufnr, 0, #lines, false, lines)
-	vim.api.nvim_buf_set_name(bufnr, const.bo.filetype)
 
 	ac.set({
 		bufnr = bufnr,
@@ -44,6 +42,9 @@ function M.create(opts)
 	})
 
 	vim.keymap.set("n", "q", function()
+		opts.write_cb({
+			buf = bufnr,
+		})
 		utils.destroy_win(winnr)
 	end, { buffer = bufnr, silent = true })
 
