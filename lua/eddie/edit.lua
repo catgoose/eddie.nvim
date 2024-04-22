@@ -47,7 +47,18 @@ lines: %s]],
 			lines
 		))
 		if vim.bo[args.buf].modified then
-			local lines_str = table.concat(lines, " ")
+			local new_lines = {}
+			for _, line in ipairs(lines) do
+				local words = utils.split_string(line)
+				if #words > 0 then
+					for _, word in ipairs(words) do
+						table.insert(new_lines, word)
+					end
+				elseif #line > 0 then
+					table.insert(new_lines, line)
+				end
+			end
+			local lines_str = table.concat(new_lines, " ")
 			vim.api.nvim_buf_set_text(bufnr, range.start_row, range.start_col, range.end_row, range.end_col, { lines_str })
 			if get_opts().write_buffer then
 				Log.debug(sf("writing buffer: %s", bufnr))
