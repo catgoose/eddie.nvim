@@ -12,6 +12,7 @@ local default_log_level = "warn"
 ---@field write_buffer boolean
 ---@field bo table
 ---@field wo table
+---@field window table
 
 ---@class Constants
 ---@field get_val fun(): Constants._val
@@ -45,6 +46,14 @@ local _val = {
 			list = false,
 			cursorline = true,
 			number = true,
+		},
+		window = {
+			padding = {
+				height = 1,
+				width = 2,
+			},
+			min_height = 2,
+			min_width = 10,
 		},
 	},
 	default_log_level = default_log_level,
