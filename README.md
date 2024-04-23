@@ -20,6 +20,19 @@ local opts = {
     width = 30,
   },
   write_buffer = true, -- write buffer when writing eddie float
+  bo = { -- buffer options
+    buftype = "acwrite",
+    filetype = "eddie",
+    swapfile = false,
+    buflisted = false,
+    bufhidden = "delete",
+    modified = false,
+  },
+  wo = { -- window options
+    list = false,
+    cursorline = true,
+    number = true,
+  },
 }
 
 return {

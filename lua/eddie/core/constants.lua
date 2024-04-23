@@ -8,6 +8,11 @@ local default_log_level = "warn"
 
 ---@class Opts
 ---@field log_level string
+---@field float FloatOpts
+---@field write_buffer boolean
+---@field bo table
+---@field wo table
+---@field window table
 
 ---@class Constants
 ---@field get_val fun(): Constants._val
@@ -29,6 +34,27 @@ local _val = {
 			width = 30,
 		},
 		write_buffer = true,
+		bo = {
+			buftype = "acwrite",
+			filetype = "eddie",
+			swapfile = false,
+			buflisted = false,
+			bufhidden = "delete",
+			modified = false,
+		},
+		wo = {
+			list = false,
+			cursorline = true,
+			number = true,
+		},
+		window = {
+			padding = {
+				height = 1,
+				width = 2,
+			},
+			min_height = 2,
+			min_width = 10,
+		},
 	},
 	default_log_level = default_log_level,
 	log_levels = { "trace", "debug", "info", "warn", "error", "fatal" },
@@ -40,17 +66,6 @@ local _val = {
 		col = 0,
 		style = "minimal",
 		border = "rounded",
-	},
-	bo = {
-		buftype = "acwrite",
-		filetype = "eddie",
-		swapfile = false,
-		buflisted = false,
-		bufhidden = "delete",
-	},
-	wo = {
-		list = false,
-		cursorline = true,
 	},
 	query = {
 		class = [[

@@ -48,12 +48,14 @@ function M.buf_lines(bufnr)
 	return vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 end
 
-function M.destroy_win(winnr)
-	if vim.api.nvim_win_is_valid(winnr) then
-		local bufnr = vim.api.nvim_win_get_buf(winnr)
-		vim.api.nvim_win_close(winnr, true)
-		if bufnr then
-			vim.api.nvim_buf_delete(bufnr, { force = true })
+function M.destroy_win(opts)
+	if not opts or not opts.winnr or not opts.bufnr then
+		return
+	end
+	if vim.api.nvim_win_is_valid(opts.winnr) then
+		vim.api.nvim_win_close(opts.winnr, true)
+		if vim.api.nvim_buf_is_valid(opts.bufnr) then
+			vim.api.nvim_buf_delete(opts.bufnr, { force = true })
 		end
 	end
 end
@@ -64,7 +66,7 @@ function M.write_buffer(bufnr)
 	end
 	if vim.api.nvim_buf_is_loaded(bufnr) then
 		vim.api.nvim_buf_call(bufnr, function()
-			vim.cmd("write")
+			vim.cmd.write()
 		end)
 	end
 end
